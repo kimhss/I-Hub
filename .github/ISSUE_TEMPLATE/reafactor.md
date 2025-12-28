@@ -1,4 +1,3 @@
-
 ---
 name: Refactor Report
 about: 리팩토링을 진행합니다.

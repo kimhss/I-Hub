@@ -1,4 +1,3 @@
-
 ---
 name: Feature Report
 about: 기능을 추가합니다.
