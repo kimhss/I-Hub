@@ -2,8 +2,8 @@
 name: Issue Created Auto Comment
 
 on:
-  issues:
-    types: [opened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 jobs:
   comment:
@@ -16,5 +16,16 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 @${{ github.event.issue.user.login }}님, 이슈를 생성해주셔서 감사합니다! 🙂\n\n이슈를 신속하게 처리할 수 있도록 최대한 자세한 정보를 제공해 주시기 바랍니다.'
-            })
+              body: `
+                    👋 이슈 생성 감사합니다!
+                    
+                    ✅ 작업 시작 전 확인
+                    - Assignee 지정
+                    - 적절한 Label 선택
+                  
+                    📌 PR 생성 시 아래 문구를 꼭 추가해주세요:
+                      \`\`\`
+                      close #${context.issue.number}
+                      \`\`\`
+                      `
+                    })
