@@ -1,0 +1,46 @@
+# PR 커밋 메시지 검사
+name: Commit Message Convention Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit messages
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commits = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const regex = /^(feat|fix|refactor|docs|test|chore): .+/;
+            const invalidCommits = commits.data.filter(
+              c => !regex.test(c.commit.message.split('\n')[0])
+            );
+
+            if (invalidCommits.length > 0) {
+              const messages = invalidCommits
+                .map(c => `- ${c.commit.message.split('\n')[0]}`)
+                .join('\n');
+
+              core.setFailed(`
+              ❌ 커밋 메시지 컨벤션을 지켜주세요.
+              
+              허용 형식:
+                - feat: 설명
+                - fix: 설명
+                - refactor: 설명
+                - docs: 설명
+                - test: 설명
+                - chore: 설명
+              
+              문제 있는 커밋:
+                ${messages}
+                `);
+                }

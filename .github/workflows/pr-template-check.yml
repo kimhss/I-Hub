@@ -1,0 +1,18 @@
+# PR 템플릿 검사
+name: PR template check
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  check-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            if (!body.includes('## 📌 작업 내용')) {
+              core.setFailed('PR 템플릿을 작성해주세요.');
+            }
