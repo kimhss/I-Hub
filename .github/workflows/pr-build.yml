@@ -20,7 +20,7 @@ jobs:
           java-version: '21'
 
       - name: Grant execute permission
-        run: chmod +x ./gradlew
+        run: chmod +x ./Backend/gradlew
 
       - name: Build & Test
         run: ./gradlew build
