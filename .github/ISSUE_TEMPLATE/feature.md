@@ -1,3 +1,12 @@
+
+---
+name: Feature Report
+about: 기능을 추가합니다.
+title: "[feature] "
+labels: feat
+assignees: ''
+---
+
 ## ✨ 기능 설명
 - 추가하려는 기능을 설명해주세요.
 

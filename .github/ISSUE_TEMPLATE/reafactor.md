@@ -1,3 +1,12 @@
+
+---
+name: Refactor Report
+about: 리팩토링을 진행합니다.
+title: "[refactor] "
+labels: refactor
+assignees: ''
+---
+
 ## 🔧 개선 배경
 - 왜 리팩토링이 필요한지 설명해주세요.
 
