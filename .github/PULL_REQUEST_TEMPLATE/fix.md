@@ -1,3 +1,11 @@
+---
+name: Fix Pull Request Report
+about: 버그를 수정합니다.
+title: "[fix] "
+labels: fix
+assignees: ''
+---
+
 ## 📌 작업 내용
 - 이 PR에서 수행한 작업을 요약해주세요.
 
