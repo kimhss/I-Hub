@@ -1,5 +1,5 @@
 ---
-name: 🐛 Bug Report
+name: Fix Report
 about: 버그를 수정합니다.
 title: "[fix] "
 labels: fix
