@@ -47,8 +47,7 @@ public class PostController {
         postService.modify(post, request.title, request.content);
         return new RsData<>(
                 "200-1",
-                "%d번 글이 수정되었습니다.".formatted(id),
-                null
+                "%d번 글이 수정되었습니다.".formatted(id)
         );
     }
 
@@ -58,8 +57,7 @@ public class PostController {
         postService.delete(id);
         return new RsData<>(
                 "200-1",
-                "%d번 글이 삭제되었습니다.".formatted(id),
-                null
+                "%d번 글이 삭제되었습니다.".formatted(id)
         );
     }
 }
