@@ -162,4 +162,23 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 글이 수정되었습니다.".formatted(id)));
     }
+
+    @Test
+    @DisplayName("글 삭제")
+    void t3() throws Exception {
+        int id = 1;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/post/" + id)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(PostController.class))
+                .andExpect(handler().methodName("delete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 글이 삭제되었습니다.".formatted(id)));
+    }
 }
