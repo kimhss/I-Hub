@@ -12,9 +12,11 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/post/{postId}")
 public class PostCommentController {
 
     private final PostService postService;
@@ -25,7 +27,7 @@ public class PostCommentController {
             String comment
     ){}
 
-    @PostMapping("/post/{postId}/comment")
+    @PostMapping("/comment")
     @Transactional
     public RsData<PostCommentDto> write(@PathVariable long postId, @Valid @RequestBody postCommentReqBody request) {
         Post post = postService.findById(postId);
@@ -39,7 +41,7 @@ public class PostCommentController {
         );
     }
 
-    @PutMapping("/post/{postId}/comment/{id}")
+    @PutMapping("/comment/{id}")
     @Transactional
     public RsData<Void> modify(@PathVariable long postId, @PathVariable long id, @Valid @RequestBody postCommentReqBody request) {
         Post post = postService.findById(postId);
@@ -52,7 +54,7 @@ public class PostCommentController {
         );
     }
 
-    @DeleteMapping("/post/{postId}/comment/{id}")
+    @DeleteMapping("/comment/{id}")
     @Transactional
     public RsData<Void> delete(@PathVariable long postId, @PathVariable long id) {
         Post post = postService.findById(postId);
@@ -63,5 +65,22 @@ public class PostCommentController {
                 "200-1",
                 "%d번 댓글이 삭제되었습니다.".formatted(id)
         );
+    }
+
+    @GetMapping("/comment/{id}")
+    public PostCommentDto getItem(@PathVariable long postId, @PathVariable long id) {
+        Post post = postService.findById(postId);
+        PostComment postComment = post.findCommentById(id).get();
+
+        return new PostCommentDto(postComment);
+    }
+
+    @GetMapping("/comments")
+    public List<PostCommentDto> getItems(@PathVariable long postId) {
+        Post post = postService.findById(postId);
+        return post.getComments()
+                .stream()
+                .map(PostCommentDto::new)
+                .toList();
     }
 }
