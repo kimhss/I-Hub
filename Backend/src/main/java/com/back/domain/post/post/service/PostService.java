@@ -2,6 +2,7 @@ package com.back.domain.post.post.service;
 
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.repository.PostRepository;
+import com.back.domain.post.postComment.entity.PostComment;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,13 @@ public class PostService {
 
     public void delete(long id) {
         postRepository.deleteById(id);
+    }
+
+    public PostComment writeComment(Post post, String comment) {
+        return post.addComment(comment);
+    }
+
+    public void flush() {
+        postRepository.flush();
     }
 }
