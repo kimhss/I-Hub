@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,5 +62,31 @@ public class PostCommentControllerTest {
                 .andExpect(jsonPath("$.data.createDate").value(Matchers.startsWith(postComment.getCreateDate().toString().substring(0, 20))))
                 .andExpect(jsonPath("$.data.modifyDate").value(Matchers.startsWith(postComment.getModifyDate().toString().substring(0, 20))))
                 .andExpect(jsonPath("$.data.comment").value("내용"));
+    }
+
+    @Test
+    @DisplayName("댓글 수정")
+    void t2() throws Exception {
+        int postId = 1;
+        int id = 1;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        put("/api/v1/post/%d/comment/%d".formatted(postId, id))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "comment": "내용 new"
+                                        }
+                                        """)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(PostCommentController.class))
+                .andExpect(handler().methodName("modify"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("%d번 댓글이 수정되었습니다.".formatted(id)));
     }
 }

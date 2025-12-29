@@ -38,4 +38,18 @@ public class PostCommentController {
                 new PostCommentDto(postComment)
         );
     }
+
+    @PutMapping("/post/{postId}/comment/{id}")
+    @Transactional
+    public RsData<Void> modify(@PathVariable long postId, @PathVariable long id, @Valid @RequestBody postCommentReqBody request) {
+        Post post = postService.findById(postId);
+        PostComment postComment = post.findCommentById(id).get();
+        postService.modifyComment(postComment, request.comment);
+
+        return new RsData<>(
+                "200-1",
+                "%d번 댓글이 수정되었습니다.".formatted(postComment.getId()),
+                null
+        );
+    }
 }

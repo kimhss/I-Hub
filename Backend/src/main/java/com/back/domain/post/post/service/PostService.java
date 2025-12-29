@@ -49,4 +49,8 @@ public class PostService {
     public void flush() {
         postRepository.flush();
     }
+
+    public void modifyComment(PostComment postComment, String comment) {
+        postComment.modify(comment);
+    }
 }
