@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,7 +32,7 @@ public class PostService {
     }
 
     public Post findById(long id) {
-        return postRepository.findById(id).orElse(null);
+        return postRepository.findById(id).get();
     }
 
     public void modify(Post post, String title, String content) {
@@ -56,5 +57,9 @@ public class PostService {
 
     public boolean deleteComment(Post post, PostComment postComment) {
         return post.deleteComment(postComment);
+    }
+
+    public List<Post> findAll() {
+        return postRepository.findAll();
     }
 }
