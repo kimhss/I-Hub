@@ -51,4 +51,15 @@ public class PostController {
                 null
         );
     }
+
+    @DeleteMapping("/post/{id}")
+    @Transactional
+    RsData<Void> delete(@PathVariable long id) {
+        postService.delete(id);
+        return new RsData<>(
+                "200-1",
+                "%d번 글이 삭제되었습니다.".formatted(id),
+                null
+        );
+    }
 }
