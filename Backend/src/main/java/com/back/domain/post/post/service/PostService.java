@@ -28,4 +28,12 @@ public class PostService {
     public long count() {
         return postRepository.count();
     }
+
+    public Post findById(long id) {
+        return postRepository.findById(id).orElse(null);
+    }
+
+    public void modify(Post post, String title, String content) {
+        post.update(title, content);
+    }
 }
