@@ -48,8 +48,20 @@ public class PostCommentController {
 
         return new RsData<>(
                 "200-1",
-                "%d번 댓글이 수정되었습니다.".formatted(postComment.getId()),
-                null
+                "%d번 댓글이 수정되었습니다.".formatted(postComment.getId())
+        );
+    }
+
+    @DeleteMapping("/post/{postId}/comment/{id}")
+    @Transactional
+    public RsData<Void> delete(@PathVariable long postId, @PathVariable long id) {
+        Post post = postService.findById(postId);
+        PostComment postComment = post.findCommentById(id).get();
+        postService.deleteComment(post, postComment);
+
+        return new RsData<>(
+                "200-1",
+                "%d번 댓글이 삭제되었습니다.".formatted(id)
         );
     }
 }

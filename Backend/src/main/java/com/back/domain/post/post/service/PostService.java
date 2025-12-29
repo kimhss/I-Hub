@@ -53,4 +53,8 @@ public class PostService {
     public void modifyComment(PostComment postComment, String comment) {
         postComment.modify(comment);
     }
+
+    public boolean deleteComment(Post post, PostComment postComment) {
+        return post.deleteComment(postComment);
+    }
 }
