@@ -23,4 +23,5 @@ jobs:
         run: chmod +x ./Backend/gradlew
 
       - name: Build & Test
-        run: ./Backend/gradlew build
+        run: ./gradlew build
+        working-directory: Backend
