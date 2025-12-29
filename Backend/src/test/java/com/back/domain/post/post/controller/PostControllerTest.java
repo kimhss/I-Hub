@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -59,7 +61,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("글 쓰기, without title")
-    void t7() throws Exception {
+    void t2() throws Exception {
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/post")
@@ -86,7 +88,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("글 쓰기, without content")
-    void t8() throws Exception {
+    void t3() throws Exception {
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/post")
@@ -113,7 +115,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("글 쓰기, with wrong json syntax")
-    void t9() throws Exception {
+    void t4() throws Exception {
 
         String wrongJsonBody = """
                 {
@@ -139,7 +141,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("글 수정")
-    void t2() throws Exception {
+    void t5() throws Exception {
         int id = 1;
 
         ResultActions resultActions = mvc
@@ -165,7 +167,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("글 삭제")
-    void t3() throws Exception {
+    void t6() throws Exception {
         int id = 1;
 
         ResultActions resultActions = mvc
@@ -180,5 +182,77 @@ public class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("%d번 글이 삭제되었습니다.".formatted(id)));
+    }
+
+    @Test
+    @DisplayName("글 단건조회")
+    void t7() throws Exception {
+        int id = 1;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/post/" + id)
+                )
+                .andDo(print());
+
+        Post post = postService.findById(id);
+
+        resultActions
+                .andExpect(handler().handlerType(PostController.class))
+                .andExpect(handler().methodName("getItem"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(post.getId()))
+                .andExpect(jsonPath("$.createDate").value(Matchers.startsWith(post.getCreateDate().toString().substring(0, 20))))
+                .andExpect(jsonPath("$.modifyDate").value(Matchers.startsWith(post.getModifyDate().toString().substring(0, 20))))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.content").value(post.getContent()));
+    }
+
+    @Test
+    @DisplayName("글 단건조회, 404")
+    void t8() throws Exception {
+        int id = Integer.MAX_VALUE;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/post/" + id)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(PostController.class))
+                .andExpect(handler().methodName("getItem"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.resultCode").value("404-1"))
+                .andExpect(jsonPath("$.msg").value("해당 데이터가 존재하지 않습니다."));
+    }
+
+
+    @Test
+    @DisplayName("글 다건조회")
+    void t9() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/posts")
+                )
+                .andDo(print());
+
+        List<Post> posts = postService.findAll();
+
+        resultActions
+                .andExpect(handler().handlerType(PostController.class))
+                .andExpect(handler().methodName("getItems"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(posts.size()));
+
+        for (int i = 0; i < posts.size(); i++) {
+            Post post = posts.get(i);
+            resultActions
+                    .andExpect(jsonPath("$[%d].id".formatted(i)).value(post.getId()))
+                    .andExpect(jsonPath("$[%d].createDate".formatted(i)).value(Matchers.startsWith(post.getCreateDate().toString().substring(0, 20))))
+                    .andExpect(jsonPath("$[%d].modifyDate".formatted(i)).value(Matchers.startsWith(post.getModifyDate().toString().substring(0, 20))))
+                    .andExpect(jsonPath("$[%d].title".formatted(i)).value(post.getTitle()))
+                    .andExpect(jsonPath("$[%d].content".formatted(i)).value(post.getContent()));
+        }
     }
 }

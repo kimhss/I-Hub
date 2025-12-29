@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -59,5 +61,21 @@ public class PostController {
                 "200-1",
                 "%d번 글이 삭제되었습니다.".formatted(id)
         );
+    }
+
+
+    @GetMapping("/post/{id}")
+    PostDto getItem(@PathVariable long id) {
+        Post post = postService.findById(id);
+        return new PostDto(post);
+    }
+
+    @GetMapping("/posts")
+    List<PostDto> getItems() {
+        List<Post> posts = postService.findAll();
+
+        return posts.stream()
+                .map(PostDto::new)
+                .toList();
     }
 }
