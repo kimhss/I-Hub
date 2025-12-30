@@ -12,7 +12,7 @@ public record PostDto(
         String content,
         LocalDateTime createDate,
         LocalDateTime modifyDate,
-        List<PostTag> tags
+        List<PostTagDto> tags
 ) {
     public PostDto(Post post) {
         this(
@@ -21,7 +21,9 @@ public record PostDto(
                 post.getContent(),
                 post.getCreateDate(),
                 post.getModifyDate(),
-                post.getTags()
+                post.getTags().stream()
+                        .map(PostTagDto::new)
+                        .toList()
         );
     }
 }

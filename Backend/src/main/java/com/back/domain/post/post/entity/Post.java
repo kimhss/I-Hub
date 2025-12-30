@@ -4,6 +4,7 @@ import com.back.domain.post.postComment.entity.PostComment;
 import com.back.domain.post.tag.entity.Tag;
 import com.back.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Post extends BaseEntity {
     private List<PostComment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = true)
     private List<PostTag> tags = new ArrayList<>();
 
     public Post(String title, String content) {

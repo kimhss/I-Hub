@@ -24,6 +24,7 @@ public class PostTag extends BaseEntity {
     private Tag tag;
 
     public PostTag(Post post, Tag tag) {
-        super();
+        this.post = post;
+        this.tag = tag;
     }
 }
