@@ -1,6 +1,7 @@
 package com.back.domain.search.controller;
 
 import com.back.domain.post.post.entity.Post;
+import com.back.domain.post.tag.entity.Tag;
 import com.back.domain.search.dto.SearchCondition;
 import com.back.domain.search.enums.SearchTarget;
 import com.back.domain.search.service.SearchService;
@@ -94,6 +95,42 @@ public class SearchControllerTest {
                 .andDo(print());
 
         List<Post> posts = searchService.search(new SearchCondition("검색", SearchTarget.BODY));
+
+        resultActions
+                .andExpect(handler().handlerType(SearchController.class))
+                .andExpect(handler().methodName("search"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(posts.size()));
+    }
+
+    @DisplayName("'java' 태그 검색 with none keyword")
+    @Test
+    void t5() throws Exception{
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/search").param("tag", "java")
+                )
+                .andDo(print());
+
+        List<Post> posts = searchService.search(new SearchCondition(null, null, "java"));
+
+        resultActions
+                .andExpect(handler().handlerType(SearchController.class))
+                .andExpect(handler().methodName("search"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(posts.size()));
+    }
+
+    @DisplayName("'java' 태그 검색 with keyword")
+    @Test
+    void t6() throws Exception{
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/search").param("keyword", "검색").param("tag", "java")
+                )
+                .andDo(print());
+
+        List<Post> posts = searchService.search(new SearchCondition("검색", null, "java"));
 
         resultActions
                 .andExpect(handler().handlerType(SearchController.class))

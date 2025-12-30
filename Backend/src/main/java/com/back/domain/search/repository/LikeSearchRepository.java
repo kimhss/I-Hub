@@ -30,21 +30,42 @@ public class LikeSearchRepository implements SearchRepository {
         };
     }
 
-    private BooleanExpression target(SearchTarget target, String keyword) {
+    private BooleanExpression target(SearchCondition condition) {
+        String keyword = condition.getKeyword();
+        SearchTarget target = condition.getTarget();
+
+        if (!StringUtils.hasText(keyword)) {
+            return null; // ⭐ 핵심
+        }
+
+        String likeKeyword = "%" + keyword + "%";
+
+        if (target == null) {
+            return post.title.like(likeKeyword)
+                    .or(post.content.like(likeKeyword));
+        }
+
         return switch (target) {
-            case TITLE -> post.title.like(keyword);
-            case BODY -> post.content.like(keyword);
-            case TITLE_BODY -> post.title.like(keyword).or(post.content.like(keyword));
+            case TITLE -> post.title.like(likeKeyword);
+            case BODY -> post.content.like(likeKeyword);
+            case TITLE_BODY -> post.title.like(likeKeyword).or(post.content.like(likeKeyword));
         };
+    }
+
+
+    private BooleanExpression tag(String tag) {
+        if (!StringUtils.hasText(tag)) return null;
+
+        return post.tags.any().tag.name.eq(tag);
     }
 
     @Override
     public List<Post> search(SearchCondition condition) {
-        String keyword = "%" + condition.getKeyword() + "%";
         return queryFactory
                 .selectFrom(post)
                 .where(
-                        target(condition.getTarget(), keyword)
+                        target(condition),
+                        tag(condition.getTag())
                 )
                 .orderBy(sort(condition.getSort()))
                 .fetch();
