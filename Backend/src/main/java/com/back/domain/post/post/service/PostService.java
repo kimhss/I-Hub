@@ -1,8 +1,11 @@
 package com.back.domain.post.post.service;
 
 import com.back.domain.post.post.entity.Post;
+import com.back.domain.post.post.entity.PostTag;
 import com.back.domain.post.post.repository.PostRepository;
 import com.back.domain.post.postComment.entity.PostComment;
+import com.back.domain.post.tag.entity.Tag;
+import com.back.domain.post.tag.service.TagService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +19,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final TagService tagService;
 
-    public Post write(String title, String content) {
+    public Post write(String title, String content, List<String> tags) {
         Post post = new Post(title, content);
+
+        if(tags != null) {
+            for(String tagName : tags) {
+                Tag tag = tagService.getOrCreate(tagName);
+                post.addTag(tag);
+            }
+        }
 
         return postRepository.save(post);
     }
