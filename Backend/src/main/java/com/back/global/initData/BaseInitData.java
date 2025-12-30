@@ -33,6 +33,7 @@ public class BaseInitData {
         Post post2 = postService.write("제목 2", "내용 2");
         Post post3 = postService.write("제목 3", "내용 3");
         Post post4 = postService.write("검색 1", "검색 1");
+        Post post5 = postService.write("검색 2", "본문 2");
 
         post1.addComment("댓글 1-1");
         post1.addComment("댓글 1-2");

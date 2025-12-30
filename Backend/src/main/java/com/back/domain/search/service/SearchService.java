@@ -17,7 +17,7 @@ public class SearchService {
     private final LikeSearchRepository likeSearchRepository;
 
     public List<Post> search(SearchCondition condition) {
-        return likeSearchRepository.search(condition);
+        return likeSearchRepository.search(normalize(condition));
     }
 
     public SearchCondition normalize(SearchCondition condition) {

@@ -3,8 +3,11 @@ package com.back.domain.search.repository;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.entity.QPost;
 import com.back.domain.search.dto.SearchCondition;
+import com.back.domain.search.enums.SearchTarget;
 import com.back.domain.search.enums.SortType;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,14 +30,21 @@ public class LikeSearchRepository implements SearchRepository {
         };
     }
 
+    private BooleanExpression target(SearchTarget target, String keyword) {
+        return switch (target) {
+            case TITLE -> post.title.like(keyword);
+            case BODY -> post.content.like(keyword);
+            case TITLE_BODY -> post.title.like(keyword).or(post.content.like(keyword));
+        };
+    }
+
     @Override
     public List<Post> search(SearchCondition condition) {
         String keyword = "%" + condition.getKeyword() + "%";
         return queryFactory
                 .selectFrom(post)
                 .where(
-                        post.title.like(keyword),
-                        post.content.like(keyword)
+                        target(condition.getTarget(), keyword)
                 )
                 .orderBy(sort(condition.getSort()))
                 .fetch();
