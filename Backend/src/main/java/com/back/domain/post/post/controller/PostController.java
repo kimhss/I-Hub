@@ -2,6 +2,7 @@ package com.back.domain.post.post.controller;
 
 import com.back.domain.post.post.dto.PostDto;
 import com.back.domain.post.post.entity.Post;
+import com.back.domain.post.post.entity.PostTag;
 import com.back.domain.post.post.service.PostService;
 import com.back.global.rsData.RsData;
 import jakarta.transaction.Transactional;
@@ -25,14 +26,15 @@ public class PostController {
             String title,
             @NotBlank
             @Size(min = 2, max = 5000)
-            String content
+            String content,
+            List<String> tags
     ) {
     }
 
     @PostMapping("/post")
     @Transactional
     RsData<PostDto> write(@Valid @RequestBody PostWriteReqBody request) {
-        Post post = postService.write(request.title, request.content);
+        Post post = postService.write(request.title, request.content, request.tags);
 
         return new RsData<>(
                 "201-1",

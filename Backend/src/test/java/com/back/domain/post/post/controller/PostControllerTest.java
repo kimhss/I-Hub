@@ -31,7 +31,7 @@ public class PostControllerTest {
     private PostService postService;
 
     @Test
-    @DisplayName("글 쓰기")
+    @DisplayName("글 쓰기 with none tags")
     void t1() throws Exception {
         ResultActions resultActions = mvc.perform(
                 post("/api/v1/post")
