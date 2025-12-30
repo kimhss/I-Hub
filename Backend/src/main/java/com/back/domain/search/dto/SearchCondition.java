@@ -23,6 +23,10 @@ public class SearchCondition {
     // 검색 범위 확장용 (제목만 / 내용만 / 제목 + 내용)
     private SearchTarget target;
 
+    public SearchCondition(String keyword, SearchTarget target) {
+        this(keyword, null, null, target);
+    }
+
     public SortType getSort() {
         return sort == null ? SortType.LATEST : sort;
     }

@@ -18,6 +18,7 @@ import java.util.List;
 public class SearchController {
     private final SearchService searchService;
 
+    // /api/search?keyword=&tag=&sort=&target
     @GetMapping("/search")
     public List<PostDto> search(@ModelAttribute SearchCondition condition) {
         return searchService.search(condition)

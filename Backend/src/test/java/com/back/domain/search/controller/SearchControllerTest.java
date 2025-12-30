@@ -2,6 +2,7 @@ package com.back.domain.search.controller;
 
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.search.dto.SearchCondition;
+import com.back.domain.search.enums.SearchTarget;
 import com.back.domain.search.service.SearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,42 @@ public class SearchControllerTest {
                 .andDo(print());
 
         List<Post> posts = searchService.search(new SearchCondition("검색"));
+
+        resultActions
+                .andExpect(handler().handlerType(SearchController.class))
+                .andExpect(handler().methodName("search"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(posts.size()));
+    }
+
+    @DisplayName("'검색' 제목 검색")
+    @Test
+    void t3() throws Exception{
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/search").param("keyword", "검색").param("target", "TITLE")
+                )
+                .andDo(print());
+
+        List<Post> posts = searchService.search(new SearchCondition("검색", SearchTarget.TITLE));
+
+        resultActions
+                .andExpect(handler().handlerType(SearchController.class))
+                .andExpect(handler().methodName("search"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(posts.size()));
+    }
+
+    @DisplayName("'검색' 본문 검색")
+    @Test
+    void t4() throws Exception{
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/search").param("keyword", "검색").param("target", "BODY")
+                )
+                .andDo(print());
+
+        List<Post> posts = searchService.search(new SearchCondition("검색", SearchTarget.BODY));
 
         resultActions
                 .andExpect(handler().handlerType(SearchController.class))
