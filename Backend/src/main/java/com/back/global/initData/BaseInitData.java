@@ -35,24 +35,28 @@ public class BaseInitData {
     }
 
     @Transactional
-    public void work1() {
+    public void work2() {
         if(postService.count() > 0) return;
 
-        Post post1 = postService.write("제목 1", "내용 1", null);
-        Post post2 = postService.write("제목 2", "내용 2", null);
-        Post post3 = postService.write("제목 3", "내용 3", null);
-        Post post4 = postService.write("검색 1", "검색 1", List.of("java", "spring-boot"));
-        Post post5 = postService.write("검색 2", "본문 2", List.of("java"));
+        Member memberUser1 = memberService.findByUsername("user1").get();
+        Member memberUser2 = memberService.findByUsername("user2").get();
+        Member memberUser3 = memberService.findByUsername("user3").get();
 
-        post1.addComment("댓글 1-1");
-        post1.addComment("댓글 1-2");
-        post1.addComment("댓글 1-3");
-        post2.addComment("댓글 2-1");
-        post2.addComment("댓글 2-2");
+        Post post1 = postService.write(memberUser1, "제목 1", "내용 1", null);
+        Post post2 = postService.write(memberUser1,"제목 2", "내용 2", null);
+        Post post3 = postService.write(memberUser1,"제목 3", "내용 3", null);
+        Post post4 = postService.write(memberUser2,"검색 1", "검색 1", List.of("java", "spring-boot"));
+        Post post5 = postService.write(memberUser2,"검색 2", "본문 2", List.of("java"));
+
+        post1.addComment(memberUser2, "댓글 1-1");
+        post1.addComment(memberUser3,"댓글 1-2");
+        post1.addComment(memberUser3,"댓글 1-3");
+        post2.addComment(memberUser1,"댓글 2-1");
+        post2.addComment(memberUser3,"댓글 2-2");
     }
 
     @Transactional
-    public void work2() {
+    public void work1() {
         if (memberService.count() > 0) return;
 
         Member memberSystem = memberService.join("system", "1234", "시스템");

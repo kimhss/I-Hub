@@ -1,9 +1,11 @@
 package com.back.domain.post.postComment.controller;
 
+import com.back.domain.member.member.entity.Member;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import com.back.domain.post.postComment.dto.PostCommentDto;
 import com.back.domain.post.postComment.entity.PostComment;
+import com.back.global.rq.Rq;
 import com.back.global.rsData.RsData;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -16,10 +18,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/post/{postId}")
+@RequestMapping("/api/v1/post/{postId}/comments")
 public class PostCommentController {
 
     private final PostService postService;
+    private final Rq rq;
 
     record postCommentReqBody(
             @NotBlank
@@ -27,11 +30,12 @@ public class PostCommentController {
             String comment
     ){}
 
-    @PostMapping("/comment")
+    @PostMapping
     @Transactional
     public RsData<PostCommentDto> write(@PathVariable long postId, @Valid @RequestBody postCommentReqBody request) {
+        Member actor = rq.getActor();
         Post post = postService.findById(postId);
-        PostComment postComment = postService.writeComment(post, request.comment);
+        PostComment postComment = postService.writeComment(actor, post, request.comment);
         // 트랜잭션 끝난 후 수행되어야 하는 더티체킹 및 여러가지 작업들을 지금 당장 수행해라.
         postService.flush();
         return new RsData<>(
@@ -41,11 +45,14 @@ public class PostCommentController {
         );
     }
 
-    @PutMapping("/comment/{id}")
+    @PutMapping("/{id}")
     @Transactional
     public RsData<Void> modify(@PathVariable long postId, @PathVariable long id, @Valid @RequestBody postCommentReqBody request) {
+        Member actor = rq.getActor();
         Post post = postService.findById(postId);
         PostComment postComment = post.findCommentById(id).get();
+        postComment.checkActorCanModify(actor);
+
         postService.modifyComment(postComment, request.comment);
 
         return new RsData<>(
@@ -54,11 +61,14 @@ public class PostCommentController {
         );
     }
 
-    @DeleteMapping("/comment/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public RsData<Void> delete(@PathVariable long postId, @PathVariable long id) {
+        Member actor = rq.getActor();
         Post post = postService.findById(postId);
         PostComment postComment = post.findCommentById(id).get();
+        postComment.checkActorCanDelete(actor);
+
         postService.deleteComment(post, postComment);
 
         return new RsData<>(
@@ -67,7 +77,7 @@ public class PostCommentController {
         );
     }
 
-    @GetMapping("/comment/{id}")
+    @GetMapping("/{id}")
     public PostCommentDto getItem(@PathVariable long postId, @PathVariable long id) {
         Post post = postService.findById(postId);
         PostComment postComment = post.findCommentById(id).get();
@@ -75,7 +85,7 @@ public class PostCommentController {
         return new PostCommentDto(postComment);
     }
 
-    @GetMapping("/comments")
+    @GetMapping
     public List<PostCommentDto> getItems(@PathVariable long postId) {
         Post post = postService.findById(postId);
         return post.getComments()

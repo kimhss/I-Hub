@@ -1,5 +1,6 @@
 package com.back.domain.post.post.service;
 
+import com.back.domain.member.member.entity.Member;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.entity.PostTag;
 import com.back.domain.post.post.repository.PostRepository;
@@ -21,8 +22,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
 
-    public Post write(String title, String content, List<String> tags) {
-        Post post = new Post(title, content);
+    public Post write(Member actor, String title, String content, List<String> tags) {
+        Post post = new Post(actor, title, content);
 
         if(tags != null) {
             for(String tagName : tags) {
@@ -54,8 +55,8 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public PostComment writeComment(Post post, String comment) {
-        return post.addComment(comment);
+    public PostComment writeComment(Member actor, Post post, String comment) {
+        return post.addComment(actor, comment);
     }
 
     public void flush() {

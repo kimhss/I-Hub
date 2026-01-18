@@ -28,8 +28,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(
-                                        "/api/**"
+                                        HttpMethod.GET,
+                                        "/api/*/posts",
+                                        "/api/*/posts/{id:\\d+}",
+                                        "/api/*/posts/{postId:\\d+}/comments",
+                                        "/api/*/posts/{postId:\\d+}/comments/{id:\\d+}"
                                 ).permitAll()
+                                .requestMatchers(
+                                        "/api/*/members/login",
+                                        "/api/*/members/logout"
+                                ).permitAll()
+                                .requestMatchers(
+                                        HttpMethod.POST,
+                                        "/api/*/members"
+                                ).permitAll()
+                                .requestMatchers("/api/*/adm/**").hasRole("ADMIN")
+                                .requestMatchers("/api/search").permitAll()
+                                .requestMatchers("/api/*/**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .headers(
