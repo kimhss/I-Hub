@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,12 +35,13 @@ public class PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 작성")
+    @WithUserDetails("user1")
     void t1() throws Exception {
         long postId = 1;
 
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/post/%d/comment".formatted(postId))
+                        post("/api/v1/post/%d/comments".formatted(postId))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -67,13 +69,14 @@ public class PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 수정")
+    @WithUserDetails("user2")
     void t2() throws Exception {
         int postId = 1;
         int id = 1;
 
         ResultActions resultActions = mvc
                 .perform(
-                        put("/api/v1/post/%d/comment/%d".formatted(postId, id))
+                        put("/api/v1/post/%d/comments/%d".formatted(postId, id))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -93,13 +96,14 @@ public class PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 삭제")
+    @WithUserDetails("user2")
     void t3() throws Exception {
         int postId = 1;
         int id = 1;
 
         ResultActions resultActions = mvc
                 .perform(
-                        delete("/api/v1/post/%d/comment/%d".formatted(postId, id))
+                        delete("/api/v1/post/%d/comments/%d".formatted(postId, id))
                 )
                 .andDo(print());
 
@@ -113,13 +117,14 @@ public class PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 단건조회")
+    @WithUserDetails("user2")
     void t4() throws Exception {
         int postId = 1;
         int id = 1;
 
         ResultActions resultActions = mvc
                 .perform(
-                        get("/api/v1/post/%d/comment/%d".formatted(postId, id))
+                        get("/api/v1/post/%d/comments/%d".formatted(postId, id))
                 )
                 .andDo(print());
 
@@ -138,6 +143,7 @@ public class PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 다건조회")
+    @WithUserDetails("user2")
     void t5() throws Exception {
         int postId = 1;
 
